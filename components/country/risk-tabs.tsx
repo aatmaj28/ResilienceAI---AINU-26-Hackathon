@@ -43,7 +43,7 @@ export function RiskTabs({ country }: { country: CountryRisk }) {
   // Generate colors for pie chart
   const pieColors = ["#3b82f6", "#ef4444", "#f59e0b", "#06b6d4", "#f97316"]
   const disasterTypes = country.disaster_breakdown?.map((d: any, i: number) => ({
-    name: d.type,
+    name: d.name, // Fixed: JSON has 'name', not 'type'
     value: d.count,
     color: pieColors[i % pieColors.length]
   })) || []

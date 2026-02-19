@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
-import { Play, RotateCcw, Send, Sparkles, Bot } from "lucide-react"
+import { Play, RotateCcw, Send, Sparkles, Bot, Loader2 } from "lucide-react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 
@@ -38,12 +38,18 @@ export default function AgentsPage() {
     .filter(([id]) => id !== "supervisor")
     .map(([id, config]) => ({ id, ...config }))
 
-  const handleSend = async () => {
-    if (!input.trim() || isRunning) return
+  const handleSend = async (overrideText?: string) => {
+    const textToSend = overrideText || input
+    if (!textToSend.trim() || isRunning) return
+
+    if (!overrideText) {
+      // Only clear input if not an override (or clear anyway? Chat page clears input)
+      // Actually, if we use override, we might want to keep input empty or clear it.
+    }
 
     setIsRunning(true)
     setFinalResponse(null)
-    setTrace([{ step: 1, text: `User asked: "${input}"`, agent: "user" }])
+    setTrace([{ step: 1, text: `User asked: "${textToSend}"`, agent: "user" }])
     setVisibleSteps(1)
     setActiveAgents(["supervisor"]) // Supervisor starts
 
@@ -51,7 +57,7 @@ export default function AgentsPage() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ message: textToSend }),
       })
 
       if (!res.ok) throw new Error("Failed to contact agents")
@@ -61,7 +67,7 @@ export default function AgentsPage() {
 
       // Build trace from response
       const newTrace: TraceStep[] = [
-        { step: 1, text: `User asked: "${input}"`, agent: "user" }
+        { step: 1, text: `User asked: "${textToSend}"`, agent: "user" }
       ]
 
       let stepCount = 2
@@ -100,6 +106,7 @@ export default function AgentsPage() {
       setTrace(newTrace)
       setFinalResponse(data.content)
       setIsRunning(true) // Start animation for the new trace
+      setInput("") // Clear input on success
 
     } catch (e) {
       console.error(e)
@@ -180,6 +187,8 @@ export default function AgentsPage() {
         <div className="lg:col-span-3 flex flex-col gap-4">
           {/* Chat Input */}
           <div className="glass rounded-xl p-4 border border-border">
+
+
             <div className="flex gap-2">
               <input
                 className="flex-1 bg-background/50 border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
@@ -189,11 +198,11 @@ export default function AgentsPage() {
                 onKeyDown={e => e.key === 'Enter' && handleSend()}
               />
               <button
-                onClick={handleSend}
+                onClick={() => handleSend()}
                 disabled={isRunning || !input.trim()}
-                className="bg-primary text-primary-foreground px-4 rounded-lg hover:bg-primary/90 disabled:opacity-50"
+                className="bg-primary text-primary-foreground px-4 rounded-lg hover:bg-primary/90 disabled:opacity-50 flex items-center justify-center min-w-[50px]"
               >
-                <Send className="w-4 h-4" />
+                {isRunning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </button>
             </div>
           </div>

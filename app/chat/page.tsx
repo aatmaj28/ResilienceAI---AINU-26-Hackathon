@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Send, Bot, User, Database, Sparkles } from "lucide-react"
+import { Send, Bot, User, Database, Sparkles, Loader2 } from "lucide-react"
 import { getRiskColor } from "@/lib/mock-data"
 import Link from "next/link"
 
@@ -27,28 +27,6 @@ const suggestedPrompts = [
   "If Ukraine collapses, who else is affected?",
   "What's the drought outlook for East Africa?",
 ]
-
-const mockResponses: Record<string, { content: string; sources: string[]; countryCard?: CountryCardData }> = {
-  "What are the top 10 global hotspots right now?": {
-    content: `Based on our latest multi-agent analysis, the top 10 global hotspots are:\n\n| Rank | Country | Risk Score | Primary Threat |\n|------|---------|-----------|----------------|\n| 1 | Ukraine | 94 | Armed Conflict |\n| 2 | Syria | 91 | Civil War |\n| 3 | Yemen | 89 | Famine & Conflict |\n| 4 | Somalia | 87 | Terrorism & Drought |\n| 5 | Afghanistan | 86 | Instability |\n| 6 | Sudan | 84 | Civil Conflict |\n| 7 | Myanmar | 79 | Military Coup |\n| 8 | Ethiopia | 74 | Ethnic Conflict |\n| 9 | Haiti | 72 | Gang Violence |\n| 10 | Libya | 68 | Political Fragmentation |\n\n**Key Insight:** Six of the top 10 countries are experiencing active armed conflict, with supply chain disruptions affecting food, energy, and medicine distribution. The situation in Sudan has deteriorated significantly, moving up 3 positions since our last quarterly assessment.`,
-    sources: ["GDELT Event Database", "EM-DAT Disaster Registry", "ERA5 Climate Data", "WHO Health Metrics"],
-  },
-  "Compare India vs China supply chain risk in 2023": {
-    content: `## India vs China: Supply Chain Risk Comparison\n\n**India** (Risk Score: **48** - MODERATE)\n- Climate vulnerability is the primary concern, with monsoon variability affecting 600M+ people\n- Food security index at 40% risk due to groundwater depletion\n- Political stability is relatively strong at 42% risk\n- 3 active disaster situations being monitored\n\n**China** (Risk Score: **42** - MODERATE)\n- Trade tensions represent the dominant risk factor at 50% economic pressure\n- Weather severity moderate at 45% with increasing typhoon frequency\n- Food security better managed at 30% risk due to strategic reserves\n- 2 active disaster situations\n\n**Supply Chain Impact:**\nChina's risk is more concentrated in **trade and economic channels**, while India's risk is distributed across **climate and food security** vectors. For diversification strategies, manufacturers should consider that both countries share overlapping disaster seasons (June-September).`,
-    sources: ["ERA5 Climate Data", "World Bank Economic Indicators", "GDELT Trade Analysis"],
-    countryCard: { id: "ind", name: "India", riskScore: 48, topThreat: "Climate Vulnerability" },
-  },
-  "If Ukraine collapses, who else is affected?": {
-    content: `## Ukraine Cascade Risk Analysis\n\nA full destabilization of Ukraine would trigger cascading effects across multiple regions:\n\n**Direct Impact (Week 1-2):**\n- **Germany** (80% linked) - Energy supply disruption, refugee pressure\n- **Poland** - Border security, humanitarian crisis management\n- **Moldova** - Energy dependence, political destabilization risk\n\n**Secondary Impact (Month 1):**\n- **Ethiopia** (60% linked) - Wheat import dependency, food price shock\n- **India** (50% linked) - Fertilizer supply chain, sunflower oil disruption\n- **Egypt** - Bread subsidy crisis, wheat import collapse\n\n**Global Ripple (Month 2+):**\n- Global wheat prices estimated to spike **45-60%**\n- Fertilizer shortages affecting **23 developing nations**\n- Energy market volatility impacting **EUR/USD exchange rates**\n\n**Estimated Population at Risk:** 340M people across 15+ countries through food supply chain disruption alone.`,
-    sources: ["Cascade Simulation Engine", "GDELT Conflict Data", "FAO Food Security Database", "IEA Energy Reports"],
-    countryCard: { id: "ukr", name: "Ukraine", riskScore: 94, topThreat: "Armed Conflict" },
-  },
-  "What's the drought outlook for East Africa?": {
-    content: `## East Africa Drought Outlook\n\nThe drought situation across East Africa remains **critical**, now entering its 6th consecutive failed rainy season in parts of Somalia and Kenya.\n\n**Current Conditions:**\n- **Somalia**: Drought index at **75%** severity. 3.8M people in crisis-level food insecurity\n- **Ethiopia**: Southern regions experiencing severe water stress. Crop yields down **35%**\n- **Kenya**: Northern pastoral regions at emergency level. Livestock losses exceeding **60%**\n\n**Weather Agent Forecast (Next 6 Months):**\n- La Nina conditions weakening - potential improvement in October-December short rains\n- However, groundwater recovery requires **3-5 consecutive normal seasons**\n- Temperature anomaly of **+1.5C** above baseline continues to stress crops\n\n**Supply Chain Implications:**\n- Coffee exports from Ethiopia projected to decline **12%**\n- Livestock trade corridor between Somalia and Kenya disrupted\n- Humanitarian aid requirements: **$4.2B** for the region`,
-    sources: ["ERA5 Climate Reanalysis", "FEWS NET Food Security", "EM-DAT Disaster Data", "Weather Agent Forecast Model"],
-    countryCard: { id: "som", name: "Somalia", riskScore: 87, topThreat: "Drought & Terrorism" },
-  },
-}
 
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([])
@@ -288,7 +266,7 @@ export default function ChatPage() {
         {isTyping && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-3">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/10 border border-primary/20">
-              <Bot className="h-3.5 w-3.5 text-primary" />
+              <Loader2 className="h-3.5 w-3.5 text-primary animate-spin" />
             </div>
             <div className="glass rounded-xl p-4 border border-border">
               <div className="flex items-center gap-1.5">
@@ -305,6 +283,7 @@ export default function ChatPage() {
 
       {/* Input Bar */}
       <div className="shrink-0 border-t border-border p-4">
+
         <form
           onSubmit={(e) => {
             e.preventDefault()

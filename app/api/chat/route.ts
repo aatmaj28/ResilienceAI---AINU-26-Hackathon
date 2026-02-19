@@ -19,6 +19,7 @@ export async function POST(req: Request) {
             }),
         })
 
+
         if (!response.ok) {
             const errorText = await response.text();
             console.error(`[API] Agent server error: ${response.status} ${response.statusText} - ${errorText}`);
