@@ -1,6 +1,6 @@
 # ResilienceAI — Global Supply Chain Risk Intelligence Platform
 
-> **Built at Innovaite 2026 Hackathon by Team AINU**
+> **Built at Innovaite 2026 Hackathon**
 
 ResilienceAI is a real-time, multi-agent AI platform that transforms raw geopolitical, climate, economic, and conflict signals into actionable supply chain risk intelligence — across 266 countries.
 
@@ -157,7 +157,6 @@ resilience-ai-ui-spec/
 ### Prerequisites
 - [Node.js 18+](https://nodejs.org/) and [pnpm](https://pnpm.io/)
 - [Python 3.10+](https://www.python.org/)
-- Access to the Blackwell GPU cluster (or configure your own OpenAI-compatible endpoint)
 
 ### Installation
 
@@ -177,15 +176,7 @@ pnpm install
 pip install -r ai_agents/requirements.txt
 ```
 
-**4. Configure environment**
-
-Create `ai_agents/.env`:
-```env
-REMOTE_BLACKWELL_URL=http://<your-blackwell-host>:8000/v1/chat/completions
-REMOTE_BLACKWELL_MODEL=google/gemma-3-12b-it
-```
-
-**5. Run everything**
+**4. Run everything**
 ```bash
 pnpm run dev:all
 ```
@@ -206,7 +197,3 @@ This concurrently starts:
 | `/api/countries/[iso3]` | `GET` | Fetch detailed risk data for a specific country |
 
 ---
-
-## 📜 License
-
-MIT License — built for the **Innovaite 2026 Hackathon**.
